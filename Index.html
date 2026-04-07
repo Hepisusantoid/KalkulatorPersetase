@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Persentase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Saira+Stencil:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-dark: #0a4c2c;      /* hijau tua untuk header dan tombol */
+      --green-medium: #146b3f;     /* hijau medium untuk hover */
+      --green-bright: #22c55e;     /* hijau cerah untuk aksen */
+      --green-light: #e8f5ed;      /* latar hasil */
+      --bg: #f4faf6;               /* latar belakang halus */
+      --card: #ffffff;
+      --border: #d0e2d6;
+      --text: #1a2a1f;
+      --muted: #5c7a66;
+    }
+    body { font-family: 'Sora', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); }
+
+    /* HOME */
+    #home { display: block; }
+    #home header { background: var(--green-dark); padding: 48px 24px 80px; text-align: center; position: relative; overflow: hidden; }
+    #home header::before { content: '%'; position: absolute; font-size: 320px; font-family: 'DM Mono', monospace; color: rgba(255,255,255,0.04); right: -40px; top: -60px; pointer-events: none; }
+    #home header h1 { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+    #home header p { color: rgba(255,255,255,0.7); margin-top: 6px; font-size: 14px; font-weight: 300; }
+    .cards-wrap { max-width: 480px; margin: -40px auto 40px; padding: 0 20px; display: flex; flex-direction: column; gap: 14px; }
+    .menu-card { background: var(--card); border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 18px; cursor: pointer; border: 1.5px solid var(--border); box-shadow: 0 2px 10px rgba(10,76,44,0.08); transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s; }
+    .menu-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(10,76,44,0.12); border-color: var(--green-bright); }
+    .menu-card .icon { width: 48px; height: 48px; border-radius: 14px; background: var(--green-dark); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; color: white; }
+    .menu-card .info h3 { font-size: 15px; font-weight: 600; color: var(--text); }
+    .menu-card .info p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .menu-card .arrow { margin-left: auto; color: var(--muted); font-size: 20px; transition: color 0.18s; }
+    .menu-card:hover .arrow { color: var(--green-bright); }
+
+    /* SUB PAGES */
+    .page { display: none; min-height: 100vh; }
+    .page.active { display: block; }
+    .page-header { background: var(--green-dark); padding: 20px 20px 60px; display: flex; align-items: center; gap: 14px; }
+    .back-btn { background: rgba(255,255,255,0.12); border: none; border-radius: 10px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 18px; transition: background 0.15s; flex-shrink: 0; }
+    .back-btn:hover { background: rgba(255,255,255,0.25); }
+    .page-header h2 { color: #fff; font-size: 20px; font-weight: 600; }
+    .form-wrap { max-width: 480px; margin: -36px auto 40px; padding: 0 20px; display: flex; flex-direction: column; gap: 14px; }
+    .field { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; transition: border-color 0.18s; }
+    .field:focus-within { border-color: var(--green-bright); }
+    .field .field-icon { font-size: 18px; color: var(--green-dark); width: 24px; text-align: center; flex-shrink: 0; font-weight: 600; }
+    .field input { border: none; outline: none; width: 100%; font-family: 'DM Mono', monospace; font-size: 16px; color: var(--text); background: transparent; }
+    .field input::placeholder { color: var(--muted); }
+    .result-box { background: var(--green-light); border: 2px solid var(--green-bright); border-radius: 16px; padding: 18px 20px; }
+    .result-box .result-label { font-size: 13px; color: var(--green-dark); font-weight: 500; }
+    .result-box .result-value { font-family: 'DM Mono', monospace; font-size: 36px; font-weight: 500; color: var(--text); text-align: center; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .result-box .result-value .unit { font-size: 22px; color: var(--muted); }
+    .reset-btn { background: var(--green-dark); color: #fff; border: none; border-radius: 14px; padding: 16px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.18s, transform 0.15s; }
+    .reset-btn:hover { background: var(--green-medium); transform: translateY(-1px); }
+    .formula-note { background: rgba(10,76,44,0.04); border-radius: 12px; padding: 14px 16px; font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; line-height: 1.7; border-left: 3px solid var(--green-bright); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .page.active .form-wrap { animation: slideUp 0.3s ease both; }
+    footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<div id="home">
+  <header>
+    <h1>Kalkulator Persentase</h1>
+    <p>Pilih jenis perhitungan yang dibutuhkan</p>
+  </header><br><br><br>
+  <div class="cards-wrap">
+    <div class="menu-card" onclick="showPage('nilai-rasio')">
+      <div class="icon">🔢</div>
+      <div class="info"><h3>Nilai Rasio</h3><p>Hitung nilai dari suatu persentase</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="menu-card" onclick="showPage('cari-rasio')">
+      <div class="icon">🔍</div>
+      <div class="info"><h3>Cari Rasionya</h3><p>Temukan persentase dari dua nilai</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="menu-card" onclick="showPage('peningkatan')">
+      <div class="icon">📈</div>
+      <div class="info"><h3>Peningkatan</h3><p>Hitung nilai setelah kenaikan persentase</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="menu-card" onclick="showPage('diskon')">
+      <div class="icon">🏷️</div>
+      <div class="info"><h3>Diskon</h3><p>Hitung harga setelah diskon</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="menu-card" onclick="showPage('perubahan')">
+      <div class="icon">🔄</div>
+      <div class="info"><h3>Perubahan</h3><p>Hitung persentase perubahan dua nilai</p></div>
+      <span class="arrow">›</span>
+    </div>
+  </div>
+  <footer>Kalkulator Persentase &copy; by Hepi Susanto</footer>
+</div>
+
+<!-- PAGE 1: Nilai Rasio -->
+<div id="nilai-rasio" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Nilai Rasio</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="nr-nilai" placeholder="Nilai:" oninput="calcNilaiRasio()" /></div>
+    <div class="field"><span class="field-icon">%</span><input type="number" id="nr-persen" placeholder="Persentase:" oninput="calcNilaiRasio()" /></div>
+    <div class="result-box"><div class="result-label">Hasil:</div><div class="result-value" id="nr-hasil">0</div></div>
+    <div class="formula-note">Rumus: Hasil = Nilai &times; (Persentase &divide; 100)<br>Contoh: 200 &times; 25% = 50</div>
+    <button class="reset-btn" onclick="resetPage('nr')">Reset</button>
+  </div>
+</div>
+
+<!-- PAGE 2: Cari Rasio -->
+<div id="cari-rasio" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Cari Rasionya</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="cr-total" placeholder="Nilai totalnya:" oninput="calcCariRasio()" /></div>
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="cr-parsial" placeholder="Nilai parsial:" oninput="calcCariRasio()" /></div>
+    <div class="result-box"><div class="result-label">Persentase:</div><div class="result-value"><span id="cr-hasil">0</span><span class="unit">%</span></div></div>
+    <div class="formula-note">Rumus: Persentase = (Parsial &divide; Total) &times; 100<br>Contoh: 50 dari 200 = 25%</div>
+    <button class="reset-btn" onclick="resetPage('cr')">Reset</button>
+  </div>
+</div>
+
+<!-- PAGE 3: Peningkatan -->
+<div id="peningkatan" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Peningkatan</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="pk-awal" placeholder="Nilai awal:" oninput="calcPeningkatan()" /></div>
+    <div class="field"><span class="field-icon">%</span><input type="number" id="pk-persen" placeholder="Persentase kenaikan:" oninput="calcPeningkatan()" /></div>
+    <div class="result-box"><div class="result-label">Nilai setelah kenaikan:</div><div class="result-value" id="pk-setelah">0</div></div>
+    <div class="result-box"><div class="result-label">Nilai kenaikan:</div><div class="result-value" id="pk-kenaikan">0</div></div>
+    <div class="formula-note">Rumus: Setelah = Awal &times; (1 + Persen/100)<br>Kenaikan = Awal &times; (Persen/100)</div>
+    <button class="reset-btn" onclick="resetPage('pk')">Reset</button>
+  </div>
+</div>
+
+<!-- PAGE 4: Diskon -->
+<div id="diskon" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Diskon</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="dk-awal" placeholder="Nilai awal:" oninput="calcDiskon()" /></div>
+    <div class="field"><span class="field-icon">%</span><input type="number" id="dk-persen" placeholder="Persentase diskon:" oninput="calcDiskon()" /></div>
+    <div class="result-box"><div class="result-label">Nilai setelah diskon:</div><div class="result-value" id="dk-setelah">0</div></div>
+    <div class="result-box"><div class="result-label">Nilai diskon:</div><div class="result-value" id="dk-diskon">0</div></div>
+    <div class="formula-note">Rumus: Setelah = Awal &times; (1 &minus; Persen/100)<br>Diskon = Awal &times; (Persen/100)</div>
+    <button class="reset-btn" onclick="resetPage('dk')">Reset</button>
+  </div>
+</div>
+
+<!-- PAGE 5: Perubahan -->
+<div id="perubahan" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Perubahan</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">①</span><input type="number" id="pb-awal" placeholder="Nilai awal:" oninput="calcPerubahan()" /></div>
+    <div class="field"><span class="field-icon">②</span><input type="number" id="pb-akhir" placeholder="Nilai akhir:" oninput="calcPerubahan()" /></div>
+    <div class="result-box"><div class="result-label">Ubah persentase:</div><div class="result-value"><span id="pb-persen">0</span><span class="unit">%</span></div></div>
+    <div class="result-box"><div class="result-label">Nilai perubahan:</div><div class="result-value" id="pb-nilai">0</div></div>
+    <div class="formula-note">Rumus: Perubahan% = ((Akhir &minus; Awal) &divide; Awal) &times; 100<br>Nilai perubahan = Akhir &minus; Awal</div>
+    <button class="reset-btn" onclick="resetPage('pb')">Reset</button>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.getElementById('home').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  history.pushState({ page: id }, '', '#' + id);
+}
+function goHome() {
+  document.getElementById('home').style.display = 'block';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  window.scrollTo(0, 0);
+  history.pushState({}, '', window.location.pathname);
+}
+window.addEventListener('popstate', (e) => {
+  if (e.state && e.state.page) showPage(e.state.page);
+  else goHome();
+});
+window.addEventListener('load', () => {
+  const hash = window.location.hash.replace('#', '');
+  if (hash && document.getElementById(hash)) showPage(hash);
+});
+
+function fmt(n) {
+  if (isNaN(n) || !isFinite(n)) return '0';
+  return (Math.round(n * 10000) / 10000).toLocaleString('id-ID');
+}
+
+function calcNilaiRasio() {
+  const v = parseFloat(document.getElementById('nr-nilai').value);
+  const p = parseFloat(document.getElementById('nr-persen').value);
+  document.getElementById('nr-hasil').textContent = fmt((v * p) / 100);
+}
+function calcCariRasio() {
+  const t = parseFloat(document.getElementById('cr-total').value);
+  const p = parseFloat(document.getElementById('cr-parsial').value);
+  document.getElementById('cr-hasil').textContent = fmt((p / t) * 100);
+}
+function calcPeningkatan() {
+  const a = parseFloat(document.getElementById('pk-awal').value);
+  const p = parseFloat(document.getElementById('pk-persen').value);
+  const k = a * (p / 100);
+  document.getElementById('pk-setelah').textContent = fmt(a + k);
+  document.getElementById('pk-kenaikan').textContent = fmt(k);
+}
+function calcDiskon() {
+  const a = parseFloat(document.getElementById('dk-awal').value);
+  const p = parseFloat(document.getElementById('dk-persen').value);
+  const d = a * (p / 100);
+  document.getElementById('dk-setelah').textContent = fmt(a - d);
+  document.getElementById('dk-diskon').textContent = fmt(d);
+}
+function calcPerubahan() {
+  const a = parseFloat(document.getElementById('pb-awal').value);
+  const b = parseFloat(document.getElementById('pb-akhir').value);
+  const diff = b - a;
+  document.getElementById('pb-persen').textContent = fmt((diff / a) * 100);
+  document.getElementById('pb-nilai').textContent = fmt(diff);
+}
+function resetPage(prefix) {
+  document.querySelectorAll('[id^="' + prefix + '-"]').forEach(el => {
+    if (el.tagName === 'INPUT') el.value = '';
+    else el.textContent = '0';
+  });
+}
+</script>
+</body>
+</html>
