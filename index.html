@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Persentase</title>
+  
+  <link rel="icon" type="image/png" href="kalkulator.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Saira+Stencil:ital,wght@0,100..900;1,100..900&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="home">
+  <header>
+    <h1>Kalkulator Persentase</h1>
+    <p>Pilih jenis perhitungan yang dibutuhkan</p>
+  </header><br><br><br>
+  <div class="cards-wrap">
+    <div class="menu-card" onclick="showPage('nilai-rasio')">
+      <div class="icon">🔢</div>
+      <div class="info"><h3>Nilai Rasio</h3><p>Hitung nilai dari suatu persentase</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="menu-card" onclick="showPage('cari-rasio')">
+      <div class="icon">🔍</div>
+      <div class="info"><h3>Cari Rasionya</h3><p>Temukan persentase dari dua nilai</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="menu-card" onclick="showPage('peningkatan')">
+      <div class="icon">📈</div>
+      <div class="info"><h3>Peningkatan</h3><p>Hitung nilai setelah kenaikan persentase</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="menu-card" onclick="showPage('diskon')">
+      <div class="icon">🏷️</div>
+      <div class="info"><h3>Diskon</h3><p>Hitung harga setelah diskon</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="menu-card" onclick="showPage('perubahan')">
+      <div class="icon">🔄</div>
+      <div class="info"><h3>Perubahan</h3><p>Hitung persentase perubahan dua nilai</p></div>
+      <span class="arrow">›</span>
+    </div>
+  </div>
+  <footer>
+    Kalkulator Persentase &copy; by Hepi Susanto<br>
+    <small>Icon by Freepik from Flaticon</small>
+  </footer>
+</div>
+
+<div id="nilai-rasio" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Nilai Rasio</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="nr-nilai" placeholder="Nilai:" oninput="calcNilaiRasio()" /></div>
+    <div class="field"><span class="field-icon">%</span><input type="number" id="nr-persen" placeholder="Persentase:" oninput="calcNilaiRasio()" /></div>
+    <div class="result-box"><div class="result-label">Hasil:</div><div class="result-value" id="nr-hasil">0</div></div>
+    <div class="formula-note">Rumus: Hasil = Nilai &times; (Persentase &divide; 100)<br>Contoh: 200 &times; 25% = 50</div>
+    <button class="reset-btn" onclick="resetPage('nr')">Reset</button>
+  </div>
+</div>
+
+<div id="cari-rasio" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Cari Rasionya</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="cr-total" placeholder="Nilai totalnya:" oninput="calcCariRasio()" /></div>
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="cr-parsial" placeholder="Nilai parsial:" oninput="calcCariRasio()" /></div>
+    <div class="result-box"><div class="result-label">Persentase:</div><div class="result-value"><span id="cr-hasil">0</span><span class="unit">%</span></div></div>
+    <div class="formula-note">Rumus: Persentase = (Parsial &divide; Total) &times; 100<br>Contoh: 50 dari 200 = 25%</div>
+    <button class="reset-btn" onclick="resetPage('cr')">Reset</button>
+  </div>
+</div>
+
+<div id="peningkatan" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Peningkatan</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="pk-awal" placeholder="Nilai awal:" oninput="calcPeningkatan()" /></div>
+    <div class="field"><span class="field-icon">%</span><input type="number" id="pk-persen" placeholder="Persentase kenaikan:" oninput="calcPeningkatan()" /></div>
+    <div class="result-box"><div class="result-label">Nilai setelah kenaikan:</div><div class="result-value" id="pk-setelah">0</div></div>
+    <div class="result-box"><div class="result-label">Nilai kenaikan:</div><div class="result-value" id="pk-kenaikan">0</div></div>
+    <div class="formula-note">Rumus: Setelah = Awal &times; (1 + Persen/100)<br>Kenaikan = Awal &times; (Persen/100)</div>
+    <button class="reset-btn" onclick="resetPage('pk')">Reset</button>
+  </div>
+</div>
+
+<div id="diskon" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Diskon</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">&#8594;</span><input type="number" id="dk-awal" placeholder="Nilai awal:" oninput="calcDiskon()" /></div>
+    <div class="field"><span class="field-icon">%</span><input type="number" id="dk-persen" placeholder="Persentase diskon:" oninput="calcDiskon()" /></div>
+    <div class="result-box"><div class="result-label">Nilai setelah diskon:</div><div class="result-value" id="dk-setelah">0</div></div>
+    <div class="result-box"><div class="result-label">Nilai diskon:</div><div class="result-value" id="dk-diskon">0</div></div>
+    <div class="formula-note">Rumus: Setelah = Awal &times; (1 &minus; Persen/100)<br>Diskon = Awal &times; (Persen/100)</div>
+    <button class="reset-btn" onclick="resetPage('dk')">Reset</button>
+  </div>
+</div>
+
+<div id="perubahan" class="page">
+  <div class="page-header"><button class="back-btn" onclick="goHome()">&#8592;</button><h2>Perubahan</h2></div>
+  <div class="form-wrap">
+    <div class="field"><span class="field-icon">①</span><input type="number" id="pb-awal" placeholder="Nilai awal:" oninput="calcPerubahan()" /></div>
+    <div class="field"><span class="field-icon">②</span><input type="number" id="pb-akhir" placeholder="Nilai akhir:" oninput="calcPerubahan()" /></div>
+    <div class="result-box"><div class="result-label">Ubah persentase:</div><div class="result-value"><span id="pb-persen">0</span><span class="unit">%</span></div></div>
+    <div class="result-box"><div class="result-label">Nilai perubahan:</div><div class="result-value" id="pb-nilai">0</div></div>
+    <div class="formula-note">Rumus: Perubahan% = ((Akhir &minus; Awal) &divide; Awal) &times; 100<br>Nilai perubahan = Akhir &minus; Awal</div>
+    <button class="reset-btn" onclick="resetPage('pb')">Reset</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
